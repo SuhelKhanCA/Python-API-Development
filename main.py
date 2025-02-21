@@ -1,7 +1,12 @@
 from fastapi import FastAPI
+from fastapi import Response
+from fastapi import status
+from fastapi import HTTPException
 from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
+from random import randrange
+
 
 class Post(BaseModel):
 
@@ -13,50 +18,39 @@ class Post(BaseModel):
 
 app = FastAPI()
 
+my_posts = [{"title" : "Title of post 1", "content" : "Content of post 1", "id": 1}, {"title" : "Title of post 2", "content" : "Content of post 2", "id": 2}]
 
-# request GET method url: "/"
+def find_post(id):
+    for post in my_posts:
+        if post["id"] == id:
+            return post
 
 @app.get("/")
 async def root():
 
-    # return { "message" : "Hello world"}
-    return { "message" : "Welcome to my my api"}
+    return { "message" : "Welcome to my api"}
 
-# Order matters
-# @app.get("/")
-# def posts():
-#     return {"data" : "These are your posts!"}
 
 @app.get("/posts")
-def posts():
-    return {"data" : "These are your posts!"}
+def get_posts():
+    return {"data" : my_posts}
 
 
-
-# @app.post("/createposts")
-# def create_posts(payload: dict = Body(...)):
-
-#     print(payload) # printing in the console
-#     return {
-#         "new_post" : {
-#             "data" : {
-#                 "title" : f"{payload['title']}",
-#                 "content" : f"{payload['content']}"
-#             }
-#         }
-#     }
-
-
-# title str, content str
-@app.post("/createposts")
+@app.post("/posts")
 def create_posts(post: Post):
+
+    post_dict = post.model_dump()
+    post_dict['id'] = randrange(3, 100000)
     
-    print(post)
-    print(post.dict()) # depricated
-    print(post.model_dump()) # new way
+    my_posts.append(post_dict)
+    return {"data" : post_dict}
 
-    print(post.published)
-    print(post.rating)
-    print(type(post)) # Post
+@app.get("/posts/{id}")
+def get_post(id : int, response : Response):
 
-    return {"data" : post}
+    post = find_post(id)
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} was not found")
+        # response.status_code = status.HTTP_404_NOT_FOUND
+        # return {"message" : f"post with id: {id} was not found"}
+    return { "post_detail" : post}
