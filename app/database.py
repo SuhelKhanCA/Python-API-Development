@@ -2,11 +2,23 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base 
 from sqlalchemy.orm import sessionmaker
 
-import time
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
+
+
+# while True: # Done using SQLAlchemy
+#     try:
+#         conn = psycopg2.connect(host=os.getenv('HOST'), database=os.getenv('DATABASE'), user=os.getenv('USER'), password=os.getenv('PASSWORD'), cursor_factory=RealDictCursor)
+#         curr = conn.cursor()
+#         print("Database connection was successfull")
+#         break
+
+#     except Exception as er:
+#         print("connecting to database failed")
+#         print("Error:", str(er))
+#         time.sleep(2)
 
 # URL ==> 'postgres://<username>:<password>@<IP-Address/hostname>/<db_name>'
 
