@@ -1,5 +1,5 @@
-from typing import Optional
-from pydantic import BaseModel, EmailStr
+from typing import Optional, List
+from pydantic import BaseModel, EmailStr, conint
 
 from datetime import datetime
 
@@ -22,13 +22,13 @@ class PostCreate(PostBase):
     pass
 
 class Post(PostBase):
+    id: int
     created_at : datetime
     owner_id: int
     owner: UserOut
 
     class Config:
         orm_mode = True
-
 
 class UserCreate(BaseModel):
     email : EmailStr
@@ -48,3 +48,15 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id : Optional[int] = None
+
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
+
+class PostOut(BaseModel):
+    Post: Post
+    votes: int
+
+    class Config:
+        orm_mode = True
