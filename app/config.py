@@ -8,4 +8,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-    # use -> Setting.host_name
+
+# settings = Settings()
+# use -> setting.host_name    
